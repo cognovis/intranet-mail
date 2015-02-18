@@ -24,16 +24,24 @@ ad_page_contract {
     @cvs-id $Id$
 } {
     object_id:notnull
+    {party_ids ""}
+    {subject ""}
+    {from_addr ""}
     {return_url ""}
 } 
 
 set page_title "[_ intranet-mail.New_Mail]"
 
+if {"" == $subject} {
+    set subject "#$object_id: "
+}
 
 # Set the cc_ids to all related object members
-set party_ids [list]
-foreach member_id [im_biz_object_member_ids $object_id] {
-    if {[lsearch $party_ids $member_id]<0} {
-        lappend party_ids $member_id
+if {$party_ids eq ""} {
+    set party_ids [list]
+    foreach member_id [im_biz_object_member_ids $object_id] {
+	if {[lsearch $party_ids $member_id]<0} {
+	    lappend party_ids $member_id
+	}
     }
 }

@@ -33,10 +33,11 @@ ad_page_contract {
     @author Malte Sussdorff (malte.sussdorff@cognovis.de)
 } -query {
     recipient:optional
-    party:optional
+    party_id:optional
     {emp_mail_f:optional 1}
     sender:optional
-    object:optional
+    context_id:optional
+    mail_url:optional
     {messages_orderby:optional "sent_date,desc"}
 } -properties {
     show_filter_p
@@ -48,14 +49,9 @@ set show_filter_p 0
 set page_title [ad_conn instance_name]
 set context [list "index"]
 
-#Only to make the code more legible
-if {[info exists object]} {
-    set project $object
-}
-
 set required_param_list [list]
-set optional_param_list [list party pass_through_vars]
-set optional_unset_list [list pkg_id project recipient sender page]
+set optional_param_list [list party_id pass_through_vars]
+set optional_unset_list [list pkg_id context_id recipient sender page]
 
 foreach required_param $required_param_list {
     if {![info exists $required_param]} {
@@ -90,7 +86,7 @@ set tracking_url [apm_package_url_from_key "intranet-mail"]
 # Wich elements will be shown on the list template
 set rows_list [list]
 if {![exists_and_not_null elements] } {
-    set rows_list [list status {} sender {} recipient {} subject {} project {} file_ids {} body {} sent_date {}]
+    set rows_list [list sender {} recipient {} subject {} context_id {} file_ids {} body {} sent_date {}]
 } else {
     foreach element $elements {
 	lappend rows_list $element
@@ -103,9 +99,9 @@ set filters [list \
 		     label "[_ intranet-mail.Sender]"
 		     where_clause "sender_id = :sender"
 		 } \
-		 project {
+		 context_id {
 		     label "[_ intranet-mail.Context_id]"
-		     where_clause "context_id = :project"
+		     where_clause "context_id = :context_id"
 		 } 
 	    ]
 
@@ -132,8 +128,8 @@ if { [apm_package_installed_p contacts] && [exists_and_not_null recipient]} {
     }
 } elseif { [exists_and_not_null recipient] }  {
     set recipient_where_clause " and mlrm.recipient_id = :recipient"
-} elseif { [exists_and_not_null party]} {
-    set recipient_where_clause " and (mlrm.recipient_id = :party or sender_id = :party)"
+} elseif { [exists_and_not_null party_id]} {
+    set recipient_where_clause " and (mlrm.recipient_id = :party_id or sender_id = :party_id)"
 } else {
     set recipient_where_clause ""
 }
@@ -164,7 +160,7 @@ template::list::create \
 	subject {
 	    label "[_ intranet-mail.Subject]"
 	}
-	project {
+	context_id {
 	    label "[_ intranet-mail.Context_id]"
 	    display_template {
 		<a href="@messages.context_url@">@messages.context_id@</a>
@@ -183,9 +179,6 @@ template::list::create \
 	sent_date {
 	    label "[_ intranet-mail.Sent_Date]"
 	}            
-	status {
-	    label "[_ intranet-mail.Status]"
-	}
     } -orderby {
 	sender {
 	    orderby sender_id
@@ -207,13 +200,7 @@ template::list::create \
         }
     } -filters $filters \
 
-db_multirow -extend { status file_ids context_url sender_name message_url recipient package_name package_url url_message_id download_files} messages select_messages { } {
-
-    if {[views::viewed_p -object_id $log_id]} {
-        set status ""
-    } else {
-        set status "NEW"
-    }
+db_multirow -extend { file_ids context_url sender_name message_url recipient package_name package_url url_message_id download_files} messages select_messages { } {
 
     if {[exists_and_not_null sender_id]} { 
         set sender_name "[party::name -party_id $sender_id]"
@@ -261,9 +248,11 @@ db_multirow -extend { status file_ids context_url sender_name message_url recipi
     set context_url "/o/$context_id"
 }
 
-if {[exists_and_not_null object]} {
-    set mail_url [export_vars -base "${tracking_url}mail" -url {{object_id $project} return_url}]
-} else {
-    set mail_url ""
+if {![exists_and_not_null mail_url]} {
+    if {[exists_and_not_null context_id]} {
+	set mail_url [export_vars -base "${tracking_url}mail" -url {{object_id $context_id} return_url}]
+    } else {
+	set mail_url ""
+    }
 }
 ad_return_template

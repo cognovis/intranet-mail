@@ -32,7 +32,7 @@ BEGIN
 	);	
 	
 	insert into acs_mail_log
-		(log_id, message_id, object_id, sender_id, package_id, subject, body, cc, bcc, sent_date, to_addr, from_addr)
+		(log_id, message_id, context_id, sender_id, package_id, subject, body, cc, bcc, sent_date, to_addr, from_addr)
 	values
 		(p_log_id, p_message_id, p_context_id, p_sender_id, p_package_id, p_subject, p_body, p_cc, p_bcc, now(), p_to_addr, p_from_addr);
 

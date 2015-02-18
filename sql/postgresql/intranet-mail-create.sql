@@ -276,7 +276,7 @@ SELECT im_component_plugin__new (
         'Intranet Mail Task Component',        -- plugin_name
         'intranet-mail',                  -- package_name
         'right',                        -- location
-        '/intranet-cognovis/tasks/view',      -- page_url
+        '/intranet/tasks/view',      -- page_url
         null,                           -- view_name
         12,                             -- sort_order
         'im_mail_project_component -project_id $task_id -return_url $return_url'
@@ -293,7 +293,7 @@ SELECT im_component_plugin__new (
         'Intranet Mail Ticket Component',        -- plugin_name
         'intranet-mail',                  -- package_name
         'right',                        -- location
-        '/intranet-cognovis/tickets/view',      -- page_url
+        '/intranet/tickets/view',      -- page_url
         null,                           -- view_name
         12,                             -- sort_order
         'im_mail_project_component -project_id $ticket_id -return_url $return_url'
@@ -324,13 +324,13 @@ BEGIN
 
 
 	-- Intranet Mail Task Component
-	SELECT plugin_id INTO v_object_id FROM im_component_plugins WHERE plugin_name = ''Intranet Mail Task Component'' AND page_url = ''/intranet-cognovis/tasks/view'';
+	SELECT plugin_id INTO v_object_id FROM im_component_plugins WHERE plugin_name = ''Intranet Mail Task Component'' AND page_url = ''/intranet/tasks/view'';
 
 	PERFORM im_grant_permission(v_object_id,v_employees,''read'');
 	PERFORM im_grant_permission(v_object_id,v_poadmins,''read'');
 
 	-- Intranet Mail Ticket Component
-	SELECT plugin_id INTO v_object_id FROM im_component_plugins WHERE plugin_name = ''Intranet Mail Ticket Component'' AND page_url = ''/intranet-cognovis/tickets/view'';
+	SELECT plugin_id INTO v_object_id FROM im_component_plugins WHERE plugin_name = ''Intranet Mail Ticket Component'' AND page_url = ''/intranet/tickets/view'';
 
 	PERFORM im_grant_permission(v_object_id,v_employees,''read'');
 	PERFORM im_grant_permission(v_object_id,v_poadmins,''read'');
