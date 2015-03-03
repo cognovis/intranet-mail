@@ -80,9 +80,9 @@ create table acs_mail_log (
         from_addr               varchar(400));
 
 
-create index acs_mail_log_object_idx on acs_mail_log(object_id);
+create index acs_mail_log_object_idx on acs_mail_log(context_id);
 create index acs_mail_log_sender_idx on acs_mail_log(sender_id);
-create index acs_mail_log_object_message_idx on acs_mail_log(object_id,message_id);
+create index acs_mail_log_object_message_idx on acs_mail_log(context_id,message_id);
 
 create table acs_mail_log_recipient_map (
 	recipient_id		integer	constraint 
@@ -125,38 +125,6 @@ select acs_object_type__create_type (
    NULL,                          -- type_extension_table
    NULL                           -- name_method
 );
-
-create or replace function acs_mail_log__new (integer,varchar, integer, integer, varchar, varchar,integer,varchar,integer,integer,varchar,varchar,varchar)
-returns integer as '
-declare	
-	p_log_id alias for $1;
-	p_message_id alias for $2;
-	p_sender_id alias for $3;
-	p_package_id alias for $4;
-	p_subject alias for $5;
-	p_body alias for $6;
-	p_creation_user alias for $7;
-        p_creation_ip alias for $8;
-        p_context_id alias for $9;
-	p_object_id alias for $10;
-	p_cc alias for $11;
-	p_bcc alias for $12;
-	p_to_addr alias for $13;
-	v_log_id acs_mail_log.log_id%TYPE;
-begin
-	v_log_id := acs_object__new (
-		p_log_id,         -- object_id
-		''mail_log'' -- object_type
-	);
-
-	insert into acs_mail_log
-		(log_id, message_id, sender_id, package_id, subject, body, sent_date, object_id, cc, bcc, to_addr)
-	values
-		(v_log_id, p_message_id, p_sender_id, p_package_id, p_subject, p_body, now(), p_object_id, p_cc, p_bcc, p_to_addr);
-
-	return v_log_id;
-
-end;' language 'plpgsql';
 
 
 create function acs_mail_log__delete (integer)

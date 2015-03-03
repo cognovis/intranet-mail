@@ -229,7 +229,7 @@ ad_proc -public im_mail_project_component {
 } { 
     Return the mail component for a Project (also Task / Ticket)
 } {
-    return [im_mail_object_component -object_id $project_id -return_url $return_url]
+    return [im_mail_object_component -context_id $project_id -return_url $return_url]
 }
 
 ad_proc -public im_mail_object_component { 
