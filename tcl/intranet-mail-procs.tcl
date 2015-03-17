@@ -233,7 +233,7 @@ ad_proc -public im_mail_project_component {
 }
 
 ad_proc -public im_mail_object_component { 
-    -context_id
+    {-context_id ""}
     {-return_url ""}
     {-mail_url ""}
     {-party_id ""}

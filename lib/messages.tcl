@@ -110,24 +110,23 @@ foreach pass_through_var $pass_through_vars {
 }
 
 # If we query for an organization (company)
-if { [apm_package_installed_p contacts] && [exists_and_not_null recipient]} {
-    set org_p [organization::organization_p -party_id $recipient] 
-    if { $org_p } {
-	lappend filters emp_mail_f {
-	    label "[_ intranet-mail.Emails_to]"
-	    values { {"[_ intranet-mail.Organization]" 1} { "[_ intranet-mail.Employees]" 2 }}
-	}
-    }
-    
-    if { $org_p && [string equal $emp_mail_f 2] } {
-	set emp_list [contact::util::get_employees -organization_id $recipient]
-	lappend emp_list $recipient
-	set recipient_where_clause " and mlrm.recipient_id in ([template::util::tcl_to_sql_list $emp_list])"
+if {[exists_and_not_null recipient]} {
+    set company_p [db_string company "select 1 from im_companies where company_id = :recipient" -default ""] 
+    if { $company_p } {
+	   lappend filters emp_mail_f {
+	       label "[_ intranet-mail.Emails_to]"
+	       values { {"[_ intranet-mail.Organization]" 1} { "[_ intranet-mail.Employees]" 2 }}
+        }
+
+        	set emp_list [db_list recipients "select	r.object_id_two
+from acs_rels r
+where r.object_id_one=:recipient and
+        r.rel_type = 'im_company_employee_rel'"]
+        	lappend emp_list $recipient
+        	set recipient_where_clause " and mlrm.recipient_id in ([template::util::tcl_to_sql_list $emp_list])"
     } else {
-	set recipient_where_clause " and mlrm.recipient_id = :recipient"
+        	set recipient_where_clause " and mlrm.recipient_id = :recipient"
     }
-} elseif { [exists_and_not_null recipient] }  {
-    set recipient_where_clause " and mlrm.recipient_id = :recipient"
 } elseif { [exists_and_not_null party_id]} {
     set recipient_where_clause " and (mlrm.recipient_id = :party_id or sender_id = :party_id)"
 } else {
