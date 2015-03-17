@@ -111,7 +111,7 @@ foreach pass_through_var $pass_through_vars {
 
 # If we query for an organization (company)
 if {[exists_and_not_null recipient]} {
-    set company_p [db_string company "select 1 from im_companies where company_id = :recipient" -default ""] 
+    set company_p [db_string company "select 1 from im_companies where company_id = :recipient" -default "0"] 
     if { $company_p } {
 	   lappend filters emp_mail_f {
 	       label "[_ intranet-mail.Emails_to]"
