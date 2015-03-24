@@ -298,8 +298,8 @@ ad_proc -public intranet-mail::log_add {
     @param context_id Context in which this message was send. Will replace object_id
     @param file_ids Files send with this e-mail
 } {
-    set creation_ip [ad_conn peeraddr]
-    set creation_user [ad_conn user_id]
+    set creation_ip "127.0.0.1"
+    set creation_user [im_sysadmin_user_default]
     
     # the object_id passed in the API parameters is the project_id. Moreover we must assign it as context_id.
     set log_id [db_nextval "acs_object_id_seq"]	
