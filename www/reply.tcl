@@ -41,8 +41,12 @@ if {$sender_id eq ""} {
 
 # Set the cc_ids to all related object members
 set cc_ids [list]
-foreach member_id [im_biz_object_member_ids $object_id] {
-    if {$member_id ne $sender_id} {
-        lappend cc_ids $member_id
+if {[info exists object_id]} {
+    foreach member_id [im_biz_object_member_ids $object_id] {
+	if {$member_id ne $sender_id} {
+	    lappend cc_ids $member_id
+	}
     }
+} else {
+    set object_id $context_id
 }
