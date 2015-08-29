@@ -249,7 +249,7 @@ ad_proc -public im_mail_object_component {
     set object [ns_queryget object]
     set page [ns_queryget page]
     set messages_orderby [ns_queryget messages_orderby]
-    set params [list  [list return_url $return_url] [list context_id $context_id] [list pass_through_vars [list context_id]] [list page $page] [list messages_orderby $messages_orderby] [list mail_url $mail_url] [list party_id $party_id] [list recipient $recipient]]
+    set params [list  [list return_url $return_url] [list mail_context_id $context_id] [list pass_through_vars [list context_id]] [list page $page] [list messages_orderby $messages_orderby] [list mail_url $mail_url] [list party_id $party_id] [list recipient $recipient]]
     if {$object eq ""} {
         lappend params [list object $context_id] 
     }

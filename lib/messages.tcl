@@ -36,7 +36,7 @@ ad_page_contract {
     party_id:optional
     {emp_mail_f:optional 1}
     sender:optional
-    context_id:optional
+    mail_context_id:optional
     mail_url:optional
     {messages_orderby:optional "sent_date,desc"}
 } -properties {
@@ -51,7 +51,7 @@ set context [list "index"]
 
 set required_param_list [list]
 set optional_param_list [list party_id pass_through_vars]
-set optional_unset_list [list pkg_id context_id recipient sender page]
+set optional_unset_list [list pkg_id mail_context_id recipient sender page]
 
 foreach required_param $required_param_list {
     if {![info exists $required_param]} {
@@ -99,9 +99,9 @@ set filters [list \
 		     label "[_ intranet-mail.Sender]"
 		     where_clause "sender_id = :sender"
 		 } \
-		 context_id {
+		 mail_context_id {
 		     label "[_ intranet-mail.Context_id]"
-		     where_clause "context_id = :context_id"
+		     where_clause "context_id = :mail_context_id"
 		 } 
 	    ]
 
@@ -248,8 +248,8 @@ db_multirow -extend { file_ids context_url sender_name message_url recipient pac
 }
 
 if {![exists_and_not_null mail_url]} {
-    if {[exists_and_not_null context_id]} {
-	set mail_url [export_vars -base "${tracking_url}mail" -url {{object_id $context_id} return_url}]
+    if {[exists_and_not_null mail_context_id]} {
+	set mail_url [export_vars -base "${tracking_url}mail" -url {{object_id $mail_context_id} return_url}]
     } else {
 	set mail_url ""
     }
