@@ -81,6 +81,7 @@ if { ![exists_and_not_null page_size] } {
     set page_size 5
 }
 
+set page_size 30
 
 set tracking_url [apm_package_url_from_key "intranet-mail"]
 # Wich elements will be shown on the list template
